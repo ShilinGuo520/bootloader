@@ -1,12 +1,6 @@
 
 
-.syntax unified
-        .cpu cortex-m3
-        .fpu softvfp
-        .thumb
-
-.global Reset_Handler
-
 Reset_Handler:
-	ldr 	r0,=100
-
+	ldr 	sp,=0x20008000
+	ldr	r0,=main
+	bx	r0
