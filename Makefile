@@ -1,0 +1,5 @@
+
+#init
+all:
+	echo "make ..." 
+
