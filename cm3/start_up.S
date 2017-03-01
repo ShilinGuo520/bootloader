@@ -1,6 +1,12 @@
 
 
-ENTR(reset)
+.syntax unified
+        .cpu cortex-m3
+        .fpu softvfp
+        .thumb
 
-reset:
-	
+.global Reset_Handler
+
+Reset_Handler:
+	ldr 	r0,=100
+
