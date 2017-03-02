@@ -22,26 +22,19 @@ OBJCOPY  := $(CROSS_COMPILE)objcopy
 OBJDUMP  := $(CROSS_COMPILE)objdump
 SIZE     := $(CROSS_COMPILE)size
 
-CFLAGS = -Os -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections
+
+INC = -I./inc
+CFLAGS = -Os -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections $(INC)
 ASFLAGS = -x assembler-with-cpp
-SRC = main.o
-
-
-ALL_CFLAGS  = -mcpu=$(MCU) $(THUMB_IW) -I. $(CFLAGS)
-
 
 
 bootloader:
 	$(AS) $(ASFLAGS) -o start_up.o -c ./cm3/start_up.S
 	$(CC) $(CFLAGS) -o main.o -c ./common/main.c
-	$(LD) $(LDFLAGS) main.o start_up.o --output $(TARGET).elf
+	$(CC) $(CFLAGS) -o leds.o -c ./driver/leds.c
+	$(LD) $(LDFLAGS) main.o start_up.o leds.o --output $(TARGET).elf
 	$(OBJCOPY) -O binary $(TARGET).elf $(TARGET).bin
 	$(OBJDUMP) -h -S -D $(TARGET).elf > objdump.txt
-	
-.o.c:
-	$(CC) $(CFLAGS) -o $@ -c $<
-.o.S:
-	$(AS) $(ASFLAGS) -o $@ -c $<
 
 clean:
 	rm *.o *.elf *.bin *.txt
