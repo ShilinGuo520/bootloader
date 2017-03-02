@@ -1,6 +1,7 @@
 
 unsigned char name[] = "bootloader";
 unsigned char time[] = "2017-02-22";
+unsigned char data[100];
 
 void delay(int time)
 {

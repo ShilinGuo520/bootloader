@@ -12,7 +12,7 @@ LDFLAGS += -T./cm3/bootloader.lds -Mmap > map.txt
 
 
 #//////////compile tools///////////////////////
-CROSS_COMPILE ?= arm-none-eabi-
+CROSS_COMPILE ?= arm-none-linux-gnueabi-
 CC       := $(CROSS_COMPILE)gcc
 CXX      := $(CROSS_COMPILE)g++
 LD       := $(CROSS_COMPILE)ld -v
