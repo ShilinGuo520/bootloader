@@ -14,14 +14,12 @@ void delay(int time)
 
 int main()
 {
-	int a;
 	led_init(1);
-	a = 20;
-	a = a + 100;
-	while(a) {
-		a--;
-		delay(a);
+	while(1) {
+		delay(100000);
 		led_on(1);
+		delay(100000);
+		led_off(1);
 	}
 
 	return 0;

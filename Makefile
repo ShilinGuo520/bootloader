@@ -12,7 +12,7 @@ LDFLAGS += -T./cm3/bootloader.lds -Mmap > map.txt
 
 
 #//////////compile tools///////////////////////
-CROSS_COMPILE ?= arm-none-linux-gnueabi-
+CROSS_COMPILE ?= arm-none-eabi-
 CC       := $(CROSS_COMPILE)gcc
 CXX      := $(CROSS_COMPILE)g++
 LD       := $(CROSS_COMPILE)ld -v
@@ -24,7 +24,7 @@ SIZE     := $(CROSS_COMPILE)size
 
 
 INC = -I./inc
-CFLAGS = -Os -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections $(INC)
+CFLAGS =$(THUMB) -O0 -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections $(INC)
 ASFLAGS = -x assembler-with-cpp
 
 
@@ -32,7 +32,7 @@ bootloader:
 	$(AS) $(ASFLAGS) -o start_up.o -c ./cm3/start_up.S
 	$(CC) $(CFLAGS) -o main.o -c ./common/main.c
 	$(CC) $(CFLAGS) -o leds.o -c ./driver/leds.c
-	$(LD) $(LDFLAGS) main.o start_up.o leds.o --output $(TARGET).elf
+	$(LD) $(LDFLAGS) start_up.o leds.o main.o --output $(TARGET).elf
 	$(OBJCOPY) -O binary $(TARGET).elf $(TARGET).bin
 	$(OBJDUMP) -h -S -D $(TARGET).elf > objdump.txt
 
