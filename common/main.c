@@ -12,15 +12,25 @@ void delay(int time)
 	}
 }
 
+int num;
+
+
+
 int main()
 {
+	num = 10;
 	led_init(1);
-	while(1) {
+	int x,y;
+
+	swap(&x, &y);
+	while(num--) {
 		delay(100000);
 		led_on(1);
 		delay(100000);
 		led_off(1);
 	}
+	
+	while(1);
 
 	return 0;
 }
