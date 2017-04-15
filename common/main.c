@@ -26,7 +26,6 @@ int main()
 	num = 10;
 	led_init(1);
 
-	swap(&x, &y);
 	while(num--) {
 		delay(100000);
 		led_on(1);
