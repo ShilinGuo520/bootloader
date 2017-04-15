@@ -3,7 +3,7 @@ MCU      = cortex-m3
 SUBMDL   = stm32f103
 
 TARGET = libcommon.a
-SRC = main.o swap.o
+SRC = main.o
 
 # toolchain (using code sourcery now)
 THUMB    = -mthumb
@@ -15,7 +15,7 @@ AR		 := $(CROSS_COMPILE)ar
 
 
 INC = -I./../inc
-CFLAGS =$(THUMB) -O0 -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections $(INC)
+CFLAGS =$(THUMB) -O0 -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-builtin $(INC)
 ARFLAGS = -rv
 
 
@@ -29,4 +29,4 @@ $(TARGET):$(SRC)
 
 
 clean:
-	rm *.o
+	rm -f *.o

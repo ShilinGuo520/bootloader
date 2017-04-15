@@ -1,5 +1,6 @@
 #include "common.h"
 #include "leds.h"
+#include "lib.h"
 
 unsigned char data[100];
 
@@ -13,14 +14,17 @@ void delay(int time)
 }
 
 int num;
-
+unsigned char src[] = "ASDFGHJK";
 
 
 int main()
-{
+{	
+	unsigned char dec[10];
+	int x,y;
+
+	memcpy(dec, src, 10);
 	num = 10;
 	led_init(1);
-	int x,y;
 
 	swap(&x, &y);
 	while(num--) {

@@ -18,7 +18,7 @@ OBJDUMP  := $(CROSS_COMPILE)objdump
 
 
 INC = -I./inc
-CFLAGS =$(THUMB) -O0 -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections $(INC)
+CFLAGS =$(THUMB) -O0 -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-builtin $(INC)
 ASFLAGS = -x assembler-with-cpp
 LDFLAGS = -T./cm3/bootloader.ld -Mmap > map.txt
 ARFLAGS = -rv
@@ -26,6 +26,7 @@ ARFLAGS = -rv
 
 ALL_LIB = libcommon.a
 ALL_LIB += libdriver.a
+ALL_LIB += libglib.a
 
 ALL_SRC = start_up.o $(ALL_LIB)
 
@@ -35,6 +36,8 @@ bootloader:$(ALL_SRC)
 	$(OBJCOPY) -O binary $(TARGET).elf $(TARGET).bin
 	$(OBJDUMP) -h -S -D $(TARGET).elf > objdump.txt
 
+libglib.a:
+	$(MAKE) -C glib
 
 libcommon.a:
 	$(MAKE) -C common
@@ -47,7 +50,8 @@ start_up.o:
 
 
 clean:
-	rm *.o *.a *.elf *.bin *.txt
 	$(MAKE) clean -C common
 	$(MAKE)	clean -C driver
+	$(MAKE) clean -C glib
+	rm -f *.o *.a *.elf *.bin *.txt
 

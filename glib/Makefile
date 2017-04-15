@@ -2,8 +2,8 @@
 MCU      = cortex-m3
 SUBMDL   = stm32f103
 
-TARGET = libdriver.a
-SRC = leds.o
+TARGET = libglib.a
+SRC = glib.o
 
 # toolchain (using code sourcery now)
 THUMB    = -mthumb
@@ -15,7 +15,7 @@ AR		 := $(CROSS_COMPILE)ar
 
 
 INC = -I./../inc
-CFLAGS =$(THUMB) -O0 -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections $(INC)
+CFLAGS =$(THUMB) -O0 -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-builtin $(INC)
 ARFLAGS = -rv
 
 

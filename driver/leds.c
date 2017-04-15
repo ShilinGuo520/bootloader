@@ -13,8 +13,8 @@ void led_init(char num)
 		GPIOB->CRH &= (~(0xF << ((LED_PIN - 8) * 4)));
 		GPIOB->CRH |= (0x1 << ((LED_PIN - 8) * 4));
 	} else {
-		GPIOB->CRL &= (~(0xF << ((LED_PIN) * 4)));
-		GPIOB->CRL |= (0x1 << ((LED_PIN) * 4));
+		GPIOB->CRL &= (~(0xF << (((LED_PIN) % 7) * 4)));
+		GPIOB->CRL |= (0x1 << (((LED_PIN) % 7) * 4));
 	}
 }
 
