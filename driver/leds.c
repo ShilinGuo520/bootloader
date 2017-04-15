@@ -3,24 +3,29 @@
  *********************************/
 
 #include "leds.h"
+#include "config.h"
 
 void led_init(char num)
 {
 	RCC->APB2ENR |= 1 << 3;
-	GPIOB->CRL &= 0x00000000;
-	GPIOB->CRL |= 0x33333333; 
-	GPIOB->CRH &= 0x00000000;
-	GPIOB->CRH |= 0x33333333;
+
+	if (LED_PIN > 7) {
+		GPIOB->CRH &= (~(0xF << ((LED_PIN - 8) * 4)));
+		GPIOB->CRH |= (0x1 << ((LED_PIN - 8) * 4));
+	} else {
+		GPIOB->CRL &= (~(0xF << ((LED_PIN) * 4)));
+		GPIOB->CRL |= (0x1 << ((LED_PIN) * 4));
+	}
 }
 
 void led_on(char num)
 {
-	GPIOB->ODR |= 0xFFFFFFFF;
+	GPIOB->ODR |= (1 << LED_PIN);
 }
 
 void led_off(char num)
 {
-	GPIOB->ODR &= 0x00000000;
+	GPIOB->ODR &= ~(1 << LED_PIN);
 }
 
 void leds_blink(char num)
