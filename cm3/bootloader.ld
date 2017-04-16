@@ -3,7 +3,7 @@
 MEMORY
 {
   RAM (xrw)     : ORIGIN = 0x20000000, LENGTH = 8K
-  FLASH (rx)    : ORIGIN = 0x08000000, LENGTH = 5K
+  FLASH (rx)    : ORIGIN = 0x08000000, LENGTH = 8K
 }
 
 SECTIONS
@@ -34,11 +34,14 @@ SECTIONS
 	{	
 		. = ALIGN(0x4);
 		_sbss = . ;
+		__bss_start__ = . ; 
 		*(.bss)
 		*(.bss*)
 		*(COMMON)
 		. = ALIGN(0x4);
 		_ebss = . ;
+		__bss_end__ = . ;
+		_exit = . ;
 	} > RAM
 
 	.stack :

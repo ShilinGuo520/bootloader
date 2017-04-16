@@ -1,7 +1,9 @@
 /******************************************
  * file nime:common.h
  *****************************************/
-unsigned char name[] = "bootloader";
-unsigned char time[] = "2017-02-22";
+#define PERIPH_BASE           ((unsigned int)0x40000000)
+#define APB2PERIPH_BASE       (PERIPH_BASE + 0x10000)
+#define AHBPERIPH_BASE        (PERIPH_BASE + 0x20000)
+
 
 

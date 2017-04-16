@@ -7,6 +7,7 @@ SRC = main.o
 
 # toolchain (using code sourcery now)
 THUMB    = -mthumb
+THUMB_IW = -mthumb-interwork
 
 #--------------compile tools-------------------
 CROSS_COMPILE ?= arm-none-eabi-
@@ -15,7 +16,7 @@ AR		 := $(CROSS_COMPILE)ar
 
 
 INC = -I./../inc
-CFLAGS =$(THUMB) -O0 -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-builtin $(INC)
+CFLAGS =$(THUMB) $(THUMB_IW) -O0 -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-builtin $(INC)
 ARFLAGS = -rv
 
 

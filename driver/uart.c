@@ -1,5 +1,49 @@
 /***********************************************
  * uart driver
  ***********************************************/
+#include "uart.h"
+#include "gpio.h"
+#include "rcc.h"
+
+
+int fputc(unsigned char ch)
+{      
+	while((USART1->SR&0X40)==0); //Blocking send
+		USART1->DR = (unsigned char) ch;
+	return ch;
+}
+
+
+int fputs(unsigned char *ch)
+{
+	while(*ch != '\0')
+		fputc(*ch++);
+	return 0;
+}
+
+
+void uart_init(unsigned int pclk2,unsigned int bound)
+{
+	float temp;
+	unsigned short mantissa;
+	unsigned short fraction;	   
+	temp=(float)(pclk2*1000000)/(bound*16);
+	mantissa=temp;				 
+	fraction=(temp-mantissa)*16;
+    mantissa<<=4;
+	mantissa+=fraction; 
+	RCC->APB2ENR|=1<<2;
+	RCC->APB2ENR|=1<<14;
+	GPIOA->CRH&=0XFFFFF00F;
+	GPIOA->CRH|=0X000008B0;
+		  
+	RCC->APB2RSTR|=1<<14;
+	RCC->APB2RSTR&=~(1<<14);
+
+ 	USART1->BRR=mantissa;
+	USART1->CR1|=0X200C;
+}
+
+
 
 
