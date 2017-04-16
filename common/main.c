@@ -1,6 +1,7 @@
 #include "common.h"
 #include "leds.h"
 #include "uart.h"
+#include "clk.h"
 #include "glib.h"
 
 unsigned char data[100];
@@ -22,7 +23,10 @@ int main()
 	int x,y;
 	unsigned char buff[100];
 	num = 10;
-	uart_init(8, 115200);
+
+	sys_clk_init(9);
+
+	uart_init(72, 115200);
 	led_init(1);
 
 	printf("Build Info:\n\rTime:%s\n\rDate:%s\n\r", __TIME__, __DATE__);

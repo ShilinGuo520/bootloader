@@ -3,7 +3,7 @@ MCU      = cortex-m3
 SUBMDL   = stm32f103
 
 TARGET = libdriver.a
-SRC = leds.o uart.o
+SRC = clk.o leds.o uart.o
 
 # toolchain (using code sourcery now)
 THUMB    = -mthumb
