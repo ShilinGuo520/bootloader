@@ -4,7 +4,9 @@
 #include "uart.h"
 #include "gpio.h"
 #include "rcc.h"
+#include "nvic.h"
 
+#define EN_UART1_RX	1
 
 int fputc(unsigned char ch)
 {      
@@ -21,29 +23,52 @@ int fputs(unsigned char *ch)
 	return 0;
 }
 
+static void usart_enable_ISR(void)
+{
+    NVIC_InitTypeDef NVIC_InitStructure;
+
+    NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQ;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = TRUE;
+    nvicInit(&NVIC_InitStructure);
+}
 
 void uart_init(unsigned int pclk2,unsigned int bound)
 {
 	float temp;
 	unsigned short mantissa;
 	unsigned short fraction;	   
-	temp=(float)(pclk2*1000000)/(bound*16);
-	mantissa=temp;				 
-	fraction=(temp-mantissa)*16;
+	temp = (float)(pclk2*1000000)/(bound*16);
+	mantissa = temp;				 
+	fraction = (temp-mantissa)*16;
     mantissa<<=4;
-	mantissa+=fraction; 
-	RCC->APB2ENR|=1<<2;
-	RCC->APB2ENR|=1<<14;
-	GPIOA->CRH&=0XFFFFF00F;
-	GPIOA->CRH|=0X000008B0;
+	mantissa += fraction; 
+	RCC->APB2ENR |= 1<<2;
+	RCC->APB2ENR |= 1<<14;
+	GPIOA->CRH &= 0XFFFFF00F;
+	GPIOA->CRH |= 0X000008B0;
 		  
-	RCC->APB2RSTR|=1<<14;
-	RCC->APB2RSTR&=~(1<<14);
+	RCC->APB2RSTR |= 1<<14;
+	RCC->APB2RSTR &= ~(1<<14);
 
- 	USART1->BRR=mantissa;
-	USART1->CR1|=0X200C;
+ 	USART1->BRR = mantissa;
+	USART1->CR1 |= 0X200C;
+#if EN_UART1_RX
+	USART1->CR1 |= 1 << 8;
+	USART1->CR1 |= 1 << 5;
+	usart_enable_ISR();
+#endif
 }
 
 
 
+void USART1_IRQHandler(void)
+{	
+	unsigned char res = 0;
+	if(USART1->SR & (1 << 5)) {
+		res = USART1->DR;
+		USART1->DR = res;
+	}
+}
 
