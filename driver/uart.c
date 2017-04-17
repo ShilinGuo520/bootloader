@@ -5,8 +5,45 @@
 #include "gpio.h"
 #include "rcc.h"
 #include "nvic.h"
+#include "glib.h"
 
-#define EN_UART1_RX	1
+#define EN_UART1_RX 1
+
+struct ringbuffer {
+	char *buff;
+	int size;
+	int data_num;
+	int read;
+	int write;
+};
+
+unsigned char uart_rx_buff[1024];
+
+struct ringbuffer *uart_rx;
+
+void ringbuffer_init(struct ringbuffer *rbuff, unsigned char *buff)
+{
+	rbuff->size = sizeof(buff);
+	rbuff->buff = buff;
+	rbuff->data_num = 0;
+	rbuff->read = 0;
+	rbuff->read = 0;
+}
+
+void ringbuffer_write(struct ringbuffer *rbuff, unsigned char ch)
+{
+	rbuff->buff[rbuff->write++] = ch;
+	if(rbuff->write >= rbuff->size)
+		rbuff->write = 0;
+
+	rbuff->data_num++;
+}
+
+void uart_rx_buff_init(void)
+{
+	memset(uart_rx_buff, 0, sizeof(uart_rx_buff));
+	ringbuffer_init(uart_rx, uart_rx_buff);
+}
 
 int fputc(unsigned char ch)
 {      
@@ -57,18 +94,21 @@ void uart_init(unsigned int pclk2,unsigned int bound)
 #if EN_UART1_RX
 	USART1->CR1 |= 1 << 8;
 	USART1->CR1 |= 1 << 5;
+	uart_rx_buff_init();
 	usart_enable_ISR();
 #endif
 }
 
 
 
+#if EN_UART1_RX
 void USART1_IRQHandler(void)
 {	
 	unsigned char res = 0;
 	if(USART1->SR & (1 << 5)) {
 		res = USART1->DR;
-		USART1->DR = res;
+		ringbuffer_write(uart_rx, res);
+//		USART1->DR = res;
 	}
 }
-
+#endif
