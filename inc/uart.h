@@ -27,3 +27,5 @@ typedef struct
 extern void uart_init(unsigned int pclk2,unsigned int bound);
 extern int fputc(unsigned char ch);
 extern int fputs(unsigned char *ch);
+extern int uart_get_buff(unsigned char *buff);
+

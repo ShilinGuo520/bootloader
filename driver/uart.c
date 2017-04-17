@@ -39,11 +39,33 @@ void ringbuffer_write(struct ringbuffer *rbuff, unsigned char ch)
 	rbuff->data_num++;
 }
 
+int ringbuffer_read(struct ringbuffer *rbuff, unsigned char *buff)
+{
+	int num = 0;
+	if((rbuff->data_num) > 0) {
+		*buff++ = rbuff->buff[rbuff->read++];
+		if(rbuff->read >= rbuff->size)
+			rbuff->read = 0;
+
+		rbuff->data_num--;
+		num++;
+	}
+	return num;
+}
+
+
 void uart_rx_buff_init(void)
 {
 	memset(uart_rx_buff, 0, sizeof(uart_rx_buff));
 	ringbuffer_init(uart_rx, uart_rx_buff);
 }
+
+
+int uart_get_buff(unsigned char *buff)
+{
+	return ringbuffer_read(uart_rx ,buff);
+}
+
 
 int fputc(unsigned char ch)
 {      

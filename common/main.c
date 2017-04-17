@@ -38,7 +38,11 @@ int main()
 		led_off(1);
 	}
 	
-	while(1);
+	while(1) {
+		num = uart_get_buff(buff);
+		if(num != 0)
+			printf("inpuf:%s", buff);
+	}
 
 	return 0;
 }
