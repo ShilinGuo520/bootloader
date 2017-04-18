@@ -39,9 +39,11 @@ int main()
 	}
 	
 	while(1) {
+		num = 0;
+		memset(buff,0,sizeof(buff));
 		num = uart_get_buff(buff);
 		if(num != 0)
-			printf("inpuf:%s", buff);
+			printf("inpuf:%s\n\r",buff);
 	}
 
 	return 0;

@@ -8,6 +8,9 @@
 #include "glib.h"
 
 #define EN_UART1_RX 1
+#define UART_RX_BUFF_SIZE	256
+
+unsigned char uart_rx_buff[UART_RX_BUFF_SIZE];
 
 struct ringbuffer {
 	char *buff;
@@ -17,37 +20,35 @@ struct ringbuffer {
 	int write;
 };
 
-unsigned char uart_rx_buff[1024];
+struct ringbuffer uart_rx_data;
 
-struct ringbuffer *uart_rx;
 
-void ringbuffer_init(struct ringbuffer *rbuff, unsigned char *buff)
+void ringbuffer_init(unsigned char *buff)
 {
-	rbuff->size = sizeof(buff);
-	rbuff->buff = buff;
-	rbuff->data_num = 0;
-	rbuff->read = 0;
-	rbuff->read = 0;
+	uart_rx_data.size = sizeof(buff);
+	uart_rx_data.buff = buff;
+	uart_rx_data.data_num = 0;
+	uart_rx_data.read = 0;
+	uart_rx_data.read = 0;
 }
 
-void ringbuffer_write(struct ringbuffer *rbuff, unsigned char ch)
+void ringbuffer_write(unsigned char ch)
 {
-	rbuff->buff[rbuff->write++] = ch;
-	if(rbuff->write >= rbuff->size)
-		rbuff->write = 0;
-
-	rbuff->data_num++;
+	uart_rx_data.buff[uart_rx_data.write ++] = ch;
+	if(uart_rx_data.write >= uart_rx_data.size)
+		uart_rx_data.write = 0;
+	uart_rx_data.data_num ++;
 }
 
-int ringbuffer_read(struct ringbuffer *rbuff, unsigned char *buff)
+int ringbuffer_read(unsigned char *buff)
 {
 	int num = 0;
-	if((rbuff->data_num) > 0) {
-		*buff++ = rbuff->buff[rbuff->read++];
-		if(rbuff->read >= rbuff->size)
-			rbuff->read = 0;
+	if((uart_rx_data.data_num) > 0) {
+		*buff++ = uart_rx_data.buff[uart_rx_data.read++];
+		if(uart_rx_data.read >= uart_rx_data.size)
+			uart_rx_data.read = 0;
 
-		rbuff->data_num--;
+		uart_rx_data.data_num--;
 		num++;
 	}
 	return num;
@@ -57,13 +58,13 @@ int ringbuffer_read(struct ringbuffer *rbuff, unsigned char *buff)
 void uart_rx_buff_init(void)
 {
 	memset(uart_rx_buff, 0, sizeof(uart_rx_buff));
-	ringbuffer_init(uart_rx, uart_rx_buff);
+	ringbuffer_init(uart_rx_buff);
 }
 
 
 int uart_get_buff(unsigned char *buff)
 {
-	return ringbuffer_read(uart_rx ,buff);
+	return ringbuffer_read(buff);
 }
 
 
@@ -129,8 +130,7 @@ void USART1_IRQHandler(void)
 	unsigned char res = 0;
 	if(USART1->SR & (1 << 5)) {
 		res = USART1->DR;
-		ringbuffer_write(uart_rx, res);
-//		USART1->DR = res;
+		ringbuffer_write(res);
 	}
 }
 #endif
