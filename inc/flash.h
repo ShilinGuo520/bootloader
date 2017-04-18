@@ -1,6 +1,15 @@
 #include "common.h"
+#include "types.h"
 
 #define FLASH_R_BASE	(AHBPERIPH_BASE + 0x2000)
+
+#define FLASH_KEY1     0x45670123
+#define FLASH_KEY2     0xCDEF89AB
+#define FLASH_RDPRT    0x00A5
+#define FLASH_SR_BSY   0x01
+#define FLASH_CR_PER   0x02
+#define FLASH_CR_PG    0x01
+#define FLASH_CR_START 0x40
 
 typedef struct
 {
@@ -23,5 +32,10 @@ typedef struct
 
 
 #define FLASH               ((FLASH_TypeDef *) FLASH_R_BASE)
+
+
+extern void flash_lock();
+extern void flash_unlock();
+extern bool flash_write_word(u32 addr, u32 word);
 
 

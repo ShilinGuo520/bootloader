@@ -13,9 +13,6 @@
 
 
 
-typedef unsigned int u32;
-typedef unsigned char u8;
-
 typedef struct {
     unsigned char NVIC_IRQChannel;
     unsigned char NVIC_IRQChannelPreemptionPriority;

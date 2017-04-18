@@ -3,6 +3,14 @@
 
 typedef int bool;
 
+typedef unsigned long u32;
+typedef unsigned short u16;
+typedef unsigned char u8;
+
+typedef volatile unsigned long  vu32;
+typedef volatile unsigned short vu16;
+typedef volatile unsigned char  vu8;
+
 #ifndef true
 #define true 1
 #endif

@@ -1,14 +1,13 @@
 /***********************************************
  * uart driver
  ***********************************************/
+#include "common.h"
 #include "uart.h"
 #include "gpio.h"
 #include "rcc.h"
 #include "nvic.h"
 #include "glib.h"
 
-#define EN_UART1_RX 1
-#define UART_RX_BUFF_SIZE	256
 
 unsigned char uart_rx_buff[UART_RX_BUFF_SIZE];
 
