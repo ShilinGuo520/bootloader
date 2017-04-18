@@ -36,6 +36,8 @@ typedef struct
 
 extern void flash_lock();
 extern void flash_unlock();
+extern bool flash_erase_page(u32 pageAddr);
+extern bool flash_erase_pages(u32 pageAddr, u16 n);
 extern bool flash_write_word(u32 addr, u32 word);
 
 
