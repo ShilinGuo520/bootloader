@@ -16,7 +16,7 @@ AR		 := $(CROSS_COMPILE)ar
 
 
 INC = -I./../inc
-CFLAGS =$(THUMB) $(THUMB_IW) -O0 -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-builtin $(INC)
+CFLAGS =$(THUMB) $(THUMB_IW) -O2 -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-builtin $(INC)
 ARFLAGS = -rv
 
 

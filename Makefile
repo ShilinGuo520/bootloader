@@ -18,7 +18,7 @@ OBJDUMP  := $(CROSS_COMPILE)objdump
 
 
 INC = -I./inc
-CFLAGS =$(THUMB) -O0 -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-builtin $(INC)
+CFLAGS =$(THUMB) -O2 -g3 -gdwarf-2 -nostdlib -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-builtin $(INC)
 ASFLAGS = -x assembler-with-cpp
 LDFLAGS = -T./cm3/bootloader.ld -Mmap > map.txt
 ARFLAGS = -rv

@@ -5,18 +5,9 @@
 #include "clk.h"
 #include "glib.h"
 #include "flash.h"
+#include "timer.h"
 
 unsigned char data[100];
-
-void delay(int time)
-{
-	while(time--){
-		if(time%2)
-			time--;
-		
-	}
-}
-
 unsigned long num;
 
 int main()
@@ -28,18 +19,22 @@ int main()
 
 	sys_clk_init(9);
 
-	uart_init(72, 115200);
+	uart_init(72, 115200); 	// 115200
 	led_init(1);
+	timer_init(100,719); // 10K 
 
-	printf("Build Info:\n\rTime:%s\n\rDate:%s\n\r", __TIME__, __DATE__);
+	printf("Build Info:\n\rDate:%s\n\rTime:%s\n\r", __DATE__, __TIME__);
 
-	while(num--) {
-		delay(100000);
+#if 1
+	while(1) {
+		delay_ms(500);
 		led_on(1);
-		delay(100000);
+		delay_ms(500);
 		led_off(1);
 	}
-	
+#endif
+
+#if 0	
 	printf("flash test:\n\r");
 	flash_unlock();
 
@@ -67,6 +62,7 @@ int main()
 	}
 
 	flash_lock();
+#endif
 
 	while(1) {
 		num = 0;
