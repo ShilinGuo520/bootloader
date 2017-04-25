@@ -3,7 +3,7 @@ MCU      = cortex-m3
 SUBMDL   = stm32f103
 
 TARGET = libcommon.a
-SRC = main.o
+SRC = main.o xmodem.o
 
 # toolchain (using code sourcery now)
 THUMB    = -mthumb

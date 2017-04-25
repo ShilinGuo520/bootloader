@@ -45,10 +45,18 @@ static char *digits = "0123456789abcdefghijklmnopqrstuvwxyz";
 static char *upper_digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 
-static unsigned long strnlen(const char *s, int count)
+int strnlen(const char *s, int count)
 {
 	const char *sc;
 	for(sc = s; *sc != '\0' && count--; ++sc)
+		;
+	return sc - s;
+}
+
+int strlen(const char *s)
+{
+	const char *sc;
+	for(sc = s; *sc != '\0'; ++sc)
 		;
 	return sc - s;
 }
@@ -364,5 +372,27 @@ int printf(const char *fmt, ...)
 	va_end(args);
 
 	fputs(buf);
+}
+
+
+int strcmp (const char *str1, const char *str2)  
+{  
+    while (*str1 && *str2 && (*str1 == *str2))  
+    {
+        str1++;  
+        str2++;  
+    }  
+    return *str1 - *str2;  
+}
+
+
+int strncmp (const char *str1, const char *str2, int n)  
+{  
+    while (*str1 && *str2 && (*str1 == *str2) && (n--))  
+    {
+        str1++;  
+	    str2++;  
+    }  
+    return *str1 - *str2;  
 }
 

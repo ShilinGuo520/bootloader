@@ -11,6 +11,8 @@ typedef volatile unsigned long  vu32;
 typedef volatile unsigned short vu16;
 typedef volatile unsigned char  vu8;
 
+typedef unsigned long size_t;
+
 #ifndef true
 #define true 1
 #endif
@@ -25,6 +27,10 @@ typedef volatile unsigned char  vu8;
 
 #ifndef FALSE
 #define FALSE 0
+#endif
+
+#ifndef NULL
+#define NULL 0
 #endif
 
 #endif

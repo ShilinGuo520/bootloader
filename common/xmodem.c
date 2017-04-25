@@ -14,7 +14,9 @@ date:2017-04-18
 #define CAN	0x18
 
 
-
-void xmodem()
+void xmodem(int argc)
+{
+	printf("file:%s\n\rfunc;%s\n\rline:%d", __FILE__, __func__, __LINE__);
+}
 
 
