@@ -11,7 +11,16 @@ unsigned char data[100];
 unsigned long num;
 
 void wait_cmd(void);
-extern void xmodem(int argc);
+
+void info(void)
+{
+	printf("\n\rBuild Info:\n\rDate:%s\n\rTime:%s", __DATE__, __TIME__);
+	printf("\n\rApp Start Add:%x", APP_START_ADD);
+	printf("\n\rFlash Size:%d", FLASH_SIZE);
+	printf("\n\rRam Size:%d\n\r", RAM_SIZE);
+}
+
+extern void xmodem(void);
 
 int main()
 {	
@@ -83,6 +92,13 @@ int get_cmd(unsigned char *cmd)
 		i = 0;
 		i = uart_get_buff(&(buff[num]));
 		if(i > 0) {
+			if(buff[num + i - 1] == '\b') {
+				if(num > 0) {
+					fputs("\b \b");
+					memset(&buff[--num], 0, i + 1);
+				}
+				continue;
+			}
 			fputs(&buff[num]);
 			num += i;
 			if((buff[num - 1] == 13) || (num >= 15))
@@ -99,10 +115,11 @@ int get_cmd(unsigned char *cmd)
 
 static struct {
 	char *cmd;
-	void (*func)(int argc);
+	void (*func)(void);
 	char *doc;
 } command[] = {
 	{"xmodem",				xmodem,				NULL},
+	{"info",				info,				NULL},
 	{NULL,					NULL,				NULL},	
 };
 
@@ -118,11 +135,12 @@ void wait_cmd(void)
 			for(i = 0; command[i].cmd; i++) {
 				if (strncmp(command[i].cmd, cmd_buf, strlen(command[i].cmd)))
 					continue;
-				command[i].func(1);
+				command[i].func();
 			}
 		} else {
 			printf("overflow\n\r");
 		}
+		printf("\n\r%s", CMD_TAG);
 	}
 	
 }
