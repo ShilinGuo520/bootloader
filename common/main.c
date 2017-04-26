@@ -11,6 +11,7 @@ unsigned char data[100];
 unsigned long num;
 
 void wait_cmd(void);
+void __MSR_MSP(u32 TopOfMainStack);
 
 void info(void)
 {
@@ -18,6 +19,40 @@ void info(void)
 	printf("\n\rApp Start Add:%x", APP_START_ADD);
 	printf("\n\rFlash Size:%d", FLASH_SIZE);
 	printf("\n\rRam Size:%d\n\r", RAM_SIZE);
+}
+
+void erase_app(void)
+{
+    flash_unlock();
+
+    if (flash_erase_pages(APP_START_ADD ,123) == TRUE) {
+        printf("\r\nflash erase success\n\r");
+    } else {
+		printf("\r\nflash erase fail\r\n");
+	}
+
+    flash_lock();
+
+}
+
+void jump_to_app(void) {
+	u32 usrAddr = APP_START_ADD;
+    typedef void (*funcPtr)(void);
+
+    u32 jumpAddr = *(vu32 *)(usrAddr + 0x04); /* reset ptr in vector table */
+    funcPtr usrMain = (funcPtr) jumpAddr;
+
+    /* tear down all the dfu related setup */
+    // disable usb interrupts, clear them, turn off usb, set the disc pin
+    // todo pick exactly what we want to do here, now its just a conservative
+    flash_lock();
+//    nvicDisableInterrupts();
+//    systemReset(); // resets clocks and periphs, not core regs
+
+
+    __MSR_MSP(*(vu32 *) usrAddr);             /* set the users stack ptr */
+
+    usrMain();                                /* go! */
 }
 
 extern void xmodem(void);
@@ -120,6 +155,8 @@ static struct {
 } command[] = {
 	{"xmodem",				xmodem,				NULL},
 	{"info",				info,				NULL},
+	{"erase",				erase_app,			NULL},
+	{"boot",				jump_to_app,		NULL},
 	{NULL,					NULL,				NULL},	
 };
 

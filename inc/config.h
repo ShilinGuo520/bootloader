@@ -1,6 +1,6 @@
 
 
-#define APP_START_ADD 			0x08004000	//0~16K:bootloader 16K~512K:application
+#define APP_START_ADD 			0x08005000	//0~20K:bootloader 20K~512K:application
 #define FLASH_SIZE				512
 #define RAM_SIZE				64
 

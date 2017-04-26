@@ -104,6 +104,14 @@ LoopFillZerobss:
 	bl	main
 
 
+.globl __MSR_MSP
+.thumb_func
+__MSR_MSP:
+
+
+    MSR msp, r0
+    BX r14
+
 	.weak	NMI_Handler
 	.weak	HardFault_Handler
 	.weak	MemManage_Handler

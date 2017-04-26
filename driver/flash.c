@@ -2,7 +2,7 @@
 #include "types.h"
 #include "glib.h"
 
-#define FLASH_LOG_EN	1
+#define FLASH_LOG_EN	0
 
 bool flash_erase_page(u32 pageAddr) {
 #if FLASH_LOG_EN

@@ -6,6 +6,7 @@ date:2017-04-18
 #include "glib.h"
 #include "uart.h"
 #include "timer.h"
+#include "flash.h"
 
 #define SOH	0x01
 #define EOT	0x04
@@ -13,7 +14,7 @@ date:2017-04-18
 #define NAK	0x15
 #define CAN	0x18
 
-#define NAK_CONT	5
+#define NAK_CONT	10
 unsigned char xmodem_buff[132];
 int xmodem_cont;
 
@@ -27,13 +28,28 @@ int xmodem_data_check(unsigned char num, unsigned char *buff)
 	return 0;	
 }
 
+void xmodem_write_flash(u32 addr,u8 *buf)
+{
+    int i = 0;
+    u32 sum;
+    flash_unlock();
+    while(i < 128) {
+        sum = buf[i+3]<<24 | buf[i+2] << 16 | buf[i+1] << 8 | buf[i];
+        flash_write_word(addr ,sum);
+        addr += 4;
+        i += 4;
+    }   
+    flash_lock();
+}
+
+
 void xmodem(void)
 {
 	unsigned char buff[10];
 	int buff_cont = 0;
 	int try = NAK_CONT;
 	unsigned char block = 1;	
-
+	int app_addr = APP_START_ADD;
 	xmodem_cont = 0;	
 
 	printf("\n\rWait Received Data\n\r");
@@ -71,11 +87,12 @@ Rec_data:
 		if (xmodem_data_check(block, xmodem_buff))
 			fputc(NAK);
 		else {
+			xmodem_write_flash(app_addr, &(xmodem_buff[3]));
 			fputc(ACK);
+			app_addr += 128;
 			block++;
 		}
 		xmodem_cont = 0;
-		//TODO: Copy data to flash
 		memset(xmodem_buff, 0, 132);
 		while((xmodem_cont == 0) && get_time_out())
 			xmodem_cont += uart_get_buff(&(xmodem_buff[xmodem_cont]));
