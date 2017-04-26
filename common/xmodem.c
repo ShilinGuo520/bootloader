@@ -17,12 +17,23 @@ date:2017-04-18
 unsigned char xmodem_buff[132];
 int xmodem_cont;
 
+int xmodem_data_check(unsigned char num, unsigned char *buff)
+{
+	/*check num*/
+	int i = 0;
+	if ((buff[0] != SOH) || (buff[1] != num) || (buff[2] != (255 - num)))
+		return -1;
+
+	return 0;	
+}
+
 void xmodem(void)
 {
 	unsigned char buff[10];
 	int buff_cont = 0;
 	int try = NAK_CONT;
-	
+	unsigned char block = 1;	
+
 	xmodem_cont = 0;	
 
 	printf("\n\rWait Received Data\n\r");
@@ -57,13 +68,17 @@ Rec_data:
 		while((xmodem_cont < 132 ) && get_time_out()) {
 			xmodem_cont += uart_get_buff(&(xmodem_buff[xmodem_cont]));
 		}
-		fputc(ACK);
+		if (xmodem_data_check(block, xmodem_buff))
+			fputc(NAK);
+		else {
+			fputc(ACK);
+			block++;
+		}
 		xmodem_cont = 0;
 		//TODO: Copy data to flash
 		memset(xmodem_buff, 0, 132);
 		while((xmodem_cont == 0) && get_time_out())
 			xmodem_cont += uart_get_buff(&(xmodem_buff[xmodem_cont]));
-		
 		if(xmodem_buff[0] == EOT)
 			break;
 		if(get_time_out() <= 0) {
