@@ -5,6 +5,13 @@
 #define NVIC_BASE  (SCS_BASE + 0x0100)
 #define SCB_BASE   (SCS_BASE + 0x0D00)
 
+#define SCS      SCS_BASE
+#define NVIC     (SCS+0x100)
+#define SCB      (SCS+0xD00)
+#define STK      (SCS+0x10) 
+
+#define SCB_VTOR (SCB+0x08)
+#define STK_CTRL (STK+0x00)
 
 
 #define TIM2_IRQ    ((u8)0x1C)
@@ -54,5 +61,5 @@ typedef struct {
 } NVIC_TypeDef;
 
 extern void nvicInit(NVIC_InitTypeDef *NVIC_InitStruct);
-
+extern void nvic_disable_interrupts(void);
 

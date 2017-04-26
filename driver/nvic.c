@@ -36,3 +36,15 @@ void nvicInit(NVIC_InitTypeDef *NVIC_InitStruct)
     rNVIC->ISER[(NVIC_InitStruct->NVIC_IRQChannel >> 0x05)] =
         (u32)0x01 << (NVIC_InitStruct->NVIC_IRQChannel & (u8)0x1F);
 }
+
+void nvic_disable_interrupts(void)
+{
+    NVIC_TypeDef *rNVIC = (NVIC_TypeDef *) NVIC_BASE;
+    rNVIC->ICER[0] = 0xFFFFFFFF;
+    rNVIC->ICER[1] = 0xFFFFFFFF;
+    rNVIC->ICPR[0] = 0xFFFFFFFF;
+    rNVIC->ICPR[1] = 0xFFFFFFFF;
+
+	*(vu32*)(STK_CTRL) = 0x04;
+}
+

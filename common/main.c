@@ -46,7 +46,7 @@ void jump_to_app(void) {
     // disable usb interrupts, clear them, turn off usb, set the disc pin
     // todo pick exactly what we want to do here, now its just a conservative
     flash_lock();
-//    nvicDisableInterrupts();
+    nvic_disable_interrupts();
 //    systemReset(); // resets clocks and periphs, not core regs
 
 
