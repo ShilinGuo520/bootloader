@@ -57,7 +57,7 @@ Rec_data:
 		xmodem_cont = 0;
 		//TODO: copy data to flash
 		memset(xmodem_buff, 0, 132);
-		while(xmodem_cont)
+		while(xmodem_cont == 0)
 			xmodem_cont += uart_get_buff(&(xmodem_buff[xmodem_cont]));
 		
 		if(xmodem_buff[0] == EOT)
