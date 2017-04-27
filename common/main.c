@@ -34,6 +34,16 @@ void erase_all_flash(void)
 
 }
 
+bool check_user_code(u32 usrAddr) {
+    u32 sp = *(vu32 *) usrAddr;
+
+    if ((sp & 0x2FFE0000) == 0x20000000) {
+        return (TRUE);
+    } else {
+        return (FALSE);
+    }   
+}
+
 void jump_to_app(void) 
 {
 	u32 usrAddr = APP_START_ADD;
@@ -51,8 +61,17 @@ void jump_to_app(void)
     usrMain();                                /* go! */
 }
 
+void boot(void)
+{
+	if (check_user_code(APP_START_ADD))
+		jump_to_app();
+	else
+		printf("\n\rnot find app code,boot fail \n\r");
+}
+
 void download(void)
 {
+	erase_all_flash();
 	xmodem();
 }
 
@@ -66,7 +85,7 @@ static struct {
     {"info",                info,               NULL},
     {"download",            download,           NULL},
     {"erase",               erase_all_flash,    NULL},
-    {"boot",                jump_to_app,        NULL},
+    {"boot",                boot,        NULL},
     {NULL,                  NULL,               NULL},  
 };
 
@@ -134,6 +153,7 @@ void wait_cmd(void)
 
 int main()
 {   
+	unsigned char temp_buff[10];
     sys_clk_init(9);
 
     uart_init(72, 115200);  // 115200
@@ -142,6 +162,21 @@ int main()
 
     printf("Build Info:\n\rDate:%s\n\rTime:%s\n\r", __DATE__, __TIME__);
 
+	set_time_out(BOOT_WAIT_TIME);	// Set boot wait time
+	while(get_time_out()) {
+		if (!(get_time_out()%1000)) {
+			printf("\rwait time: %d s  ", (get_time_out()/1000));
+		}
+		
+		if(uart_get_buff(temp_buff))
+			goto wait;
+	}
+
+	printf("\n\rwait time out,try to boot the app.\n\r");
+	boot();
+
+wait:
+	printf("\n\renter command mode\n\r");
     while(1) {
         wait_cmd();
     }
