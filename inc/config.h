@@ -6,7 +6,7 @@
 
 #define LED_PIN				9
 
-#define BOOT_WAIT_TIME		15000
+#define BOOT_WAIT_TIME		5000
 
 #define EN_UART1_RX         1
 #define UART_RX_BUFF_SIZE   64

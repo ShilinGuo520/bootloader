@@ -54,7 +54,7 @@ void xmodem(void)
 
 	printf("\n\rWait Received Data\n\r");
 	while(try--) {
-		printf("Wait %d s\r", try * 3);
+		printf("Wait %d s  \r", try * 3);
 		fputc(NAK);
 		set_time_out(3000);
 		while(get_time_out()) {
