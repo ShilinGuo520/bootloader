@@ -33,6 +33,8 @@ void xmodem_write_flash(u32 addr,u8 *buf)
     int i = 0;
     u32 sum;
     flash_unlock();
+	if (!(addr % 0x400))
+		flash_erase_page(addr);
     while(i < 128) {
         sum = buf[i+3]<<24 | buf[i+2] << 16 | buf[i+1] << 8 | buf[i];
         flash_write_word(addr ,sum);
