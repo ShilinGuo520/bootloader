@@ -7,11 +7,9 @@
 #include "flash.h"
 #include "timer.h"
 
-unsigned char data[100];
-unsigned long num;
 
-void wait_cmd(void);
-void __MSR_MSP(u32 TopOfMainStack);
+extern void xmodem(void);
+extern void __MSR_MSP(u32 TopOfMainStack);
 
 void info(void)
 {
@@ -21,7 +19,7 @@ void info(void)
 	printf("\n\rRam Size:%d\n\r", RAM_SIZE);
 }
 
-void erase_app(void)
+void erase_all_flash(void)
 {
     flash_unlock();
 
@@ -35,19 +33,16 @@ void erase_app(void)
 
 }
 
-void jump_to_app(void) {
+void jump_to_app(void) 
+{
 	u32 usrAddr = APP_START_ADD;
     typedef void (*funcPtr)(void);
 
     u32 jumpAddr = *(vu32 *)(usrAddr + 0x04); /* reset ptr in vector table */
     funcPtr usrMain = (funcPtr) jumpAddr;
 
-    /* tear down all the dfu related setup */
-    // disable usb interrupts, clear them, turn off usb, set the disc pin
-    // todo pick exactly what we want to do here, now its just a conservative
     flash_lock();
     nvic_disable_interrupts();
-//    systemReset(); // resets clocks and periphs, not core regs
 
 
     __MSR_MSP(*(vu32 *) usrAddr);             /* set the users stack ptr */
@@ -55,68 +50,24 @@ void jump_to_app(void) {
     usrMain();                                /* go! */
 }
 
-extern void xmodem(void);
-
-int main()
-{	
-	unsigned char dec[10];
-	unsigned long x,y;
-	unsigned char buff[100];
-	num = 10;
-
-	sys_clk_init(9);
-
-	uart_init(72, 115200); 	// 115200
-	led_init(1);
-	timer_init(100,719); // 10K 
-
-	printf("Build Info:\n\rDate:%s\n\rTime:%s\n\r", __DATE__, __TIME__);
-
-#if 0
-	while(1) {
-		delay_ms(500);
-		led_on(1);
-		delay_ms(500);
-		led_off(1);
-	}
-#endif
-
-#if 0	
-	printf("flash test:\n\r");
-	flash_unlock();
-
-	if (flash_erase_pages(APP_START_ADD ,108) == TRUE) {
-		printf("flash erase done\n\r");
-	}
-	flash_lock();
-	
-	flash_unlock();
-	num = APP_START_ADD;
-	y = 0;
-	while (y < 0x1900) {
-		if (flash_write_word(num, y) != TRUE) {
-			printf("write err:0x%08x\n\r", num);
-			break;
-		}
-		num = num + 4;
-		y = y + 4;
-	}
-		
-	if (y >= 0x1900) {
-		printf("flash write done,flash test done\n\r");
-	} else {
-		printf("flash write err\n\r");
-	}
-
-	flash_lock();
-#endif
-
-	while(1) {
-		wait_cmd();
-	}
-
-	return 0;
+void download(void)
+{
+	xmodem();
 }
+
+
+static struct {
+    char *cmd;
+    void (*func)(void);
+    char *doc;
+} command[] = {
+    {"info",                info,               NULL},
+    {"download",            download,           NULL},
+    {"erase",               erase_all_flash,    NULL},
+    {"boot",                jump_to_app,        NULL},
+    {NULL,                  NULL,               NULL},  
+};
+
 
 int get_cmd(unsigned char *cmd)
 {
@@ -148,18 +99,6 @@ int get_cmd(unsigned char *cmd)
 	}
 }
 
-static struct {
-	char *cmd;
-	void (*func)(void);
-	char *doc;
-} command[] = {
-	{"xmodem",				xmodem,				NULL},
-	{"info",				info,				NULL},
-	{"erase",				erase_app,			NULL},
-	{"boot",				jump_to_app,		NULL},
-	{NULL,					NULL,				NULL},	
-};
-
 
 void wait_cmd(void)
 {
@@ -182,4 +121,21 @@ void wait_cmd(void)
 	
 }
 
+
+int main()
+{   
+    sys_clk_init(9);
+
+    uart_init(72, 115200);  // 115200
+    led_init(1);
+    timer_init(100,719); // 10K 
+
+    printf("Build Info:\n\rDate:%s\n\rTime:%s\n\r", __DATE__, __TIME__);
+
+    while(1) {
+        wait_cmd();
+    }
+
+    return 0;
+}
 
