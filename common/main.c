@@ -8,6 +8,7 @@
 #include "timer.h"
 
 
+void help(void);
 extern void xmodem(void);
 extern void __MSR_MSP(u32 TopOfMainStack);
 
@@ -61,6 +62,7 @@ static struct {
     void (*func)(void);
     char *doc;
 } command[] = {
+	{"help",				help,				NULL},
     {"info",                info,               NULL},
     {"download",            download,           NULL},
     {"erase",               erase_all_flash,    NULL},
@@ -68,6 +70,14 @@ static struct {
     {NULL,                  NULL,               NULL},  
 };
 
+
+void help(void)
+{
+	int i;
+	printf("\n\rcommand line:\n\r");
+	for (i = 0; command[i].cmd; i++)
+		printf(" %s \n\r", command[i].cmd);
+}
 
 int get_cmd(unsigned char *cmd)
 {
