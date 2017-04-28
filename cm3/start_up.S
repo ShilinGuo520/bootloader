@@ -77,7 +77,7 @@ Reset_Handler:
   b	LoopCopyDataInit
 
 CopyDataInit:
-				ldr	r3, =_sidata
+	ldr	r3, =_sidata
 	ldr	r3, [r3, r1]
 	str	r3, [r0, r1]
 	adds	r1, r1, #4
