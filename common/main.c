@@ -85,7 +85,7 @@ static struct {
     {"info",                info,               NULL},
     {"download",            download,           NULL},
     {"erase",               erase_all_flash,    NULL},
-    {"boot",                boot,        NULL},
+    {"boot",                boot,               NULL},
     {NULL,                  NULL,               NULL},  
 };
 
@@ -94,8 +94,12 @@ void help(void)
 {
 	int i;
 	printf("\n\rcommand line:\n\r");
-	for (i = 0; command[i].cmd; i++)
+	for (i = 0; command[i].cmd; i++) {
 		printf(" %s \n\r", command[i].cmd);
+        if (command[i].doc) {
+            printf("--description:%s \n\r", command[i].doc);
+        }
+    }
 }
 
 int get_cmd(unsigned char *cmd)
