@@ -17,3 +17,5 @@
 ## cmd help:
 * download - used xmodem download app.bin to flash(0x08005000)
 * boot - boot app form flash(0x08005000)
+* info - print build information
+* erase - erase flash (app section)
