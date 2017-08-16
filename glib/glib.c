@@ -249,11 +249,12 @@ static int vsprintf(char *buf, const char *fmt, va_list args)
             case 's':
             {
                 int len;
+		int i;
                 char * s = va_arg(args, char *);
                 if (!s) s = "<NULL>";
                 len = strnlen(s, precision);
                 if (!(flags & LEFT)) while (len < field_width--) *str++ = ' ';
-                for (int i = 0; i < len; ++i) *str++ = *s++;
+                for (i = 0; i < len; ++i) *str++ = *s++;
                 while (len < field_width--) *str++ = ' ';
                 continue;
             }
