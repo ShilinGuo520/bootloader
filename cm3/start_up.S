@@ -5,7 +5,7 @@
 
 __Vectros:
 	.word	stack_top
-	.word	(Reset_Handler + 1)
+	.word	Reset_Handler
 	.word	NMI_Handler
 	.word	HardFault_Handler
 	.word	MemManage_Handler
@@ -72,6 +72,9 @@ __Vectros:
 .word	_ebss
 
 
+	.section	.text.Reset_Handler
+		.weak	Reset_Handler
+		.type	Reset_Handler, %function
 Reset_Handler:
   movs	r1, #0
   b	LoopCopyDataInit
@@ -102,7 +105,7 @@ LoopFillZerobss:
 
 
 	bl	main
-
+.size	Reset_Handler, .-Reset_Handler
 
 .globl __MSR_MSP
 .thumb_func
